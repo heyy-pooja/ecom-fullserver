@@ -24,7 +24,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: "SERVER ERROR", error: err.message })
 })
 mongoose.connect(process.env.MONGO_URL)
-app.listen(process.env.PORT, console.log("Server Running"))
 mongoose.connection.once("open", () => {
     console.log("MONGO CONNECTED")
+    app.listen(process.env.PORT, console.log("Server Running"))
 })
