@@ -54,17 +54,18 @@ exports.registerUser = asyncHandler(async (req, res) => {
 exports.loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body
     const result = await User.findOne({ email })
+    const found = await User.findOne({ email })
     if (!result) {
         return res.status(400).json({ message: "Email Not Fount" })
     }
-    const verify = await bcrypt.compare(password, result.password)
+    const verify = await bcrypt.compare(password, found.password)
     if (!verify) {
         return res.status(400).json({ message: "Password Do Not Match" })
     }
     if (!found.active) {
         return res.status(401).json({ message: "Account Blocked By Admin" })
     }
-    const Token = jwt.sign({ userID: result._id }, process.env.JWT_KEY)
+    const Token = jwt.sign({ userID: found._id }, process.env.JWT_KEY)
     res.cookie("user", Token, { httpOnly: true })
     res.json({
         message: "User login Successs", result: {
